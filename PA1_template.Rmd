@@ -16,7 +16,7 @@ suppressWarnings( library(dplyr) )
 
 
 ## Loading and preprocessing the data
-1. Load the data
+#### Load the data
 ```{r}
 # Load the data
 data <- read.csv(
@@ -27,7 +27,7 @@ data <- read.csv(
 ```
 
 
-2. Transformation and processing
+#### Transformation and processing
 ```{r}
 # Drop NA values using complete.cases
 complete <- data[ complete.cases( data ), ]
@@ -35,19 +35,19 @@ complete <- data[ complete.cases( data ), ]
 
 ## What is mean total number of steps taken per day?
 
-1. Calculate the total number of steps taken per day
+#### Calculate the total number of steps taken per day
 ```{r}
 dailySteps <- group_by( complete, date ) %>% summarise( steps = sum( steps ) )
 mean(dailySteps$steps)
 ```
 The mean total number of steps taken per day is **`r as.integer(mean(dailySteps$steps))`**
 
-2. Make a histogram of the total number of steps taken each day
+#### Make a histogram of the total number of steps taken each day
 ```{r}
 hist( dailySteps$steps, main = 'Daily number of steps', xlab = 'steps' )
 ```
 
-3. Calculate and report the mean and median of the total number of steps taken per day
+#### Calculate and report the mean and median of the total number of steps taken per day
 ```{r}
 dailyStepsMean <- mean( dailySteps$steps )
 dailyStepsMean
@@ -59,7 +59,7 @@ The mean and median of the number of steps taken per day are **`r as.integer(dai
 
 ## What is the average daily activity pattern?
 
-1. Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+#### Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 ```{r}
 groupedByInterval <- group_by(complete, interval) %>% summarise( avgSteps = mean(steps))
@@ -72,7 +72,7 @@ plot(
 )
 ```
 
-2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+#### Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 ```{r}
 maxSteps <- (groupedByInterval %>% summarise( maxSteps = max(avgSteps)))$maxSteps
@@ -86,17 +86,17 @@ The interval which on average contains the maximum number of steps(**`r as.integ
 
 ## Imputing missing values
 
-1. Calculate and report the total number of missing values in the dataset
+#### Calculate and report the total number of missing values in the dataset
 ```{r}
 missingValueRows <- nrow( data[ is.na( data$steps ), ] )
 missingValueRows
 ```
 The original data-set contains **`r as.integer(missingValueRows)`** rows with missing (NA)) values.
 
-2. Devise a strategy for filling in all of the missing values in the dataset.  
+#### Devise a strategy for filling in all of the missing values in the dataset.  
 Filling of missing values shall be done using the existing mean (averaged ofer all days) for that 5-minute interval.
 
-3. Create a new dataset that is equal to the original dataset but with the missing data filled in.  
+#### Create a new dataset that is equal to the original dataset but with the missing data filled in.  
 ```{r}
 
 # create a new dataset
@@ -111,13 +111,13 @@ for(i in 1 : nrow(filled)){
 }
 ```
 
-4. Make a histogram of the total number of steps taken each day
+#### Make a histogram of the total number of steps taken each day
 ```{r}
 dailyStepsFilled <- group_by( filled, date ) %>% summarise( steps = sum( steps ) )
 hist( dailyStepsFilled$steps, main = 'Total number of steps taken each day', xlab = 'steps' )
 ```
 
-* Calculate and report the mean and median total number of steps taken per day
+#### Calculate and report the mean and median total number of steps taken per day
 ```{r}
 dailyStepsMeanFilled <- mean( dailyStepsFilled$steps )
 dailyStepsMeanFilled 
@@ -127,7 +127,7 @@ dailyStepsMedianFilled
 ```
 The mean and median of the number of steps taken per day after imputation are **`r as.integer(dailyStepsMeanFilled)`** and **`r as.integer(dailyStepsMedianFilled)`** respectively.
 
-* Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+#### Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 ```{r}
 meanRelativeChange <- 100 * (dailyStepsMeanFilled - dailyStepsMean) / dailyStepsMean
@@ -143,14 +143,14 @@ Overall total daily number of steps increases by the number of total steps imput
 
 ## Differences in activity patterns between weekdays and weekends?
 
-1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+#### Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
 ```{r}
 filled$day <- as.factor( ifelse(as.POSIXlt(data$date)$wday %in% c( 0, 6 ), 'weekend', 'weekday' ) )
 groupedByIntervalAndDay <- group_by( filled, interval, day ) %>% summarise( avgSteps = mean(steps) )
 ```
 
-2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
+#### Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
 
 ```{r fig.height=8}
 par( mfrow = c( 2, 1 ) )
